@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     RATE_LIMIT_WINDOW_MINUTES: int = 10
 
     # SMS Provider
-    SMS_API_KEY: Optional[str] = Field(None, alias="2FACTOR")
+    SMS_API_KEY: Optional[str] = Field(None, alias="TWOFACTOR")
 
     # Front URL
     FRONTEND_BASE_URL: str = "http://localhost:5173"
