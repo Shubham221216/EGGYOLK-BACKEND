@@ -51,7 +51,7 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
 
 @router.post("/codes/generate", response_model=GenerateCodesResponse)
 def generate_codes(payload: GenerateCodesInput, db: Session = Depends(get_db)):
-    """Generates a batch of unique random 8-digit codes."""
+    """Generates a batch of unique random alphanumeric scratch codes."""
     codes = CodeService.generate_batch_codes(
         db=db,
         count=payload.count,
@@ -142,7 +142,7 @@ def list_claims(
 
 @router.get("/search", response_model=SearchResult)
 def search_system(query: str = Query(..., min_length=2), db: Session = Depends(get_db)):
-    """Search by 8-digit code, phone number, or reference ID."""
+    """Search by scratch code, phone number, or reference ID."""
     clean = query.strip()
 
     # Search codes

@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     MAX_OTP_REQUESTS_PER_WINDOW: int = 3
     RATE_LIMIT_WINDOW_MINUTES: int = 10
 
+    # SMS Provider
+    SMS_API_KEY: Optional[str] = Field(None, alias="2FACTOR")
+
     # Front URL
     FRONTEND_BASE_URL: str = "http://localhost:5173"
 

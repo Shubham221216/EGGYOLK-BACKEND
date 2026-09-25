@@ -7,6 +7,7 @@ import logging
 from app.models.otp_verification import OTPVerification
 from app.config import get_settings
 from app.utils.security import hash_otp, verify_otp_hash, generate_otp
+from app.services.sms_service import SMSService
 
 logger = logging.getLogger("uvicorn.error")
 settings = get_settings()
@@ -76,12 +77,21 @@ class OTPService:
         db.commit()
         db.refresh(otp_record)
 
-        # 5. Production rule vs DEMO logging:
-        # "Also print the OTP in the backend console: [DEMO OTP] Mobile: 9876543210 | OTP: 483921"
-        print(f"\n==================================================")
-        print(f"[DEMO OTP] Mobile: {phone_number} | OTP: {raw_otp}")
-        print(f"==================================================\n", flush=True)
-        logger.info(f"[DEMO OTP] Mobile: {phone_number} | OTP: {raw_otp}")
+        # 5. Send actual SMS using provider (and fallback to DEMO logging if needed)
+        sms_sent = SMSService.send_otp(phone_number, raw_otp)
+        
+        if not sms_sent and not settings.DEMO_MODE:
+            # If we are in production and SMS fails, we must abort so the customer isn't stuck waiting for an OTP that won't arrive.
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to send OTP SMS. Please try again later."
+            )
+        
+        if settings.DEMO_MODE:
+            print(f"\n==================================================")
+            print(f"[DEMO OTP] Mobile: {phone_number} | OTP: {raw_otp}")
+            print(f"==================================================\n", flush=True)
+            logger.info(f"[DEMO OTP] Mobile: {phone_number} | OTP: {raw_otp}")
 
         return raw_otp, otp_record
 

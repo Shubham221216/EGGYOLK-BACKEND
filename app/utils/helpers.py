@@ -40,12 +40,12 @@ def generate_reference_id() -> str:
     return f"CB-{date_str}-{random_suffix}"
 
 
-def is_valid_8digit_code(code: str) -> bool:
-    """Validates whether the cashback code is exactly 8 digits."""
+def is_valid_scratch_code(code: str) -> bool:
+    """Validates whether the scratch code is exactly 8 alphanumeric characters."""
     if not code:
         return False
     clean = code.strip()
-    return bool(re.match(r"^\d{8}$", clean))
+    return bool(re.match(r"^[a-zA-Z0-9]{8}$", clean))
 
 
 def is_valid_upi_id(upi: str) -> bool:

@@ -7,7 +7,7 @@ from typing import List, Tuple, Optional
 from app.models.cashback_code import CashbackCode
 from app.models.cashback_claim import CashbackClaim
 from app.config import get_settings
-from app.utils.security import generate_random_8digit_code
+from app.utils.security import generate_random_scratch_code
 from app.utils.helpers import generate_reference_id
 
 settings = get_settings()
@@ -60,7 +60,7 @@ class CodeService:
         upi_id: Optional[str] = None
     ) -> CashbackClaim:
         """
-        Guarantees ONE 8-DIGIT CODE = ONE CASHBACK CLAIM.
+        Guarantees ONE SCRATCH CODE = ONE CASHBACK CLAIM.
         Uses an atomic conditional UPDATE at the database level inside a transaction.
         Even with concurrent requests, only one query can update status from 'UNUSED' to 'USED'.
         """
@@ -143,7 +143,7 @@ class CodeService:
         expires_days: int = 30,
         campaign_id: str = "CAMPAIGN_2026_EGG"
     ) -> List[CashbackCode]:
-        """Generates N unique random 8-digit codes in batch."""
+        """Generates N unique random alphanumeric codes in batch."""
         now = datetime.now(timezone.utc)
         expires_at = now + timedelta(days=expires_days)
 
@@ -155,7 +155,7 @@ class CodeService:
         generated_set = set()
 
         while len(new_codes) < count:
-            code_candidate = generate_random_8digit_code()
+            code_candidate = generate_random_scratch_code()
             if code_candidate not in existing_codes_set and code_candidate not in generated_set:
                 generated_set.add(code_candidate)
                 new_codes.append(

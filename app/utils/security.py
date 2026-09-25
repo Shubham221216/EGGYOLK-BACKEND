@@ -24,11 +24,12 @@ def generate_otp() -> str:
     return str(num)
 
 
-def generate_random_8digit_code() -> str:
-    """Generates a secure, non-predictable 8-digit code."""
-    # Ensure it's not all zeros or easily guessable
-    digits = [str(secrets.randbelow(10)) for _ in range(8)]
-    return "".join(digits)
+def generate_random_scratch_code(length: int = 8) -> str:
+    """Generates a secure, non-predictable 8-character alphanumeric code."""
+    import string
+    chars = string.ascii_uppercase + string.digits
+    chars = chars.replace('O', '').replace('0', '').replace('I', '').replace('1', '')
+    return "".join(secrets.choice(chars) for _ in range(length))
 
 
 def generate_verification_token(code: str, phone: str, secret_key: str, expires_in_seconds: int = 600) -> str:

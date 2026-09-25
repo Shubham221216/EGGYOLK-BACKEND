@@ -18,12 +18,11 @@ settings = get_settings()
 
 def seed_demo_data():
     """
-    Seeds initial demo data as mandated by the project specification:
-    - 58392147 -> UNUSED (Scenario A)
-    - 71938452 -> UNUSED
-    - 24681735 -> USED (Scenario B / sample claim)
-    - 13579246 -> EXPIRED (Scenario C)
-    Invalid code: 11111111 (Scenario D - left absent from DB)
+    - GY7K9P2A -> UNUSED (Scenario A)
+    - EGG24X91 -> UNUSED
+    - YOLK8F72 -> USED (Scenario B / sample claim)
+    - EXPIRE99 -> EXPIRED (Scenario C)
+    Invalid code: INV4L1DX (Scenario D - left absent from DB)
     """
     db = SessionLocal()
     try:
@@ -34,7 +33,7 @@ def seed_demo_data():
         seeds = [
             # 1. Scenario A: Unused fresh code
             {
-                "code": "58392147",
+                "code": "GY7K9P2A",
                 "amount": settings.DEFAULT_CASHBACK_AMOUNT,
                 "status": "UNUSED",
                 "expires_at": future_expiry,
@@ -42,7 +41,7 @@ def seed_demo_data():
             },
             # 2. Unused fresh code
             {
-                "code": "71938452",
+                "code": "EGG24X91",
                 "amount": settings.DEFAULT_CASHBACK_AMOUNT,
                 "status": "UNUSED",
                 "expires_at": future_expiry,
@@ -50,7 +49,7 @@ def seed_demo_data():
             },
             # 3. Scenario B / Demo used code
             {
-                "code": "24681735",
+                "code": "YOLK8F72",
                 "amount": settings.DEFAULT_CASHBACK_AMOUNT,
                 "status": "USED",
                 "expires_at": future_expiry,
@@ -60,7 +59,7 @@ def seed_demo_data():
             },
             # 4. Scenario C: Expired code
             {
-                "code": "13579246",
+                "code": "EXPIRE99",
                 "amount": settings.DEFAULT_CASHBACK_AMOUNT,
                 "status": "EXPIRED",
                 "expires_at": past_expiry,

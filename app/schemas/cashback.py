@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field, field_validator
 from typing import Optional
 from datetime import datetime
 from app.utils.helpers import (
-    is_valid_8digit_code,
+    is_valid_scratch_code,
     is_valid_indian_phone,
     normalize_phone_number,
     is_valid_upi_id,
@@ -10,16 +10,16 @@ from app.utils.helpers import (
 
 
 class RequestOTPInput(BaseModel):
-    code: str = Field(..., description="Unique 8-digit cashback code inside package")
+    code: str = Field(..., description="Unique alphanumeric scratch code inside package")
     phone_number: str = Field(..., description="Customer 10-digit mobile number")
 
     @field_validator("code")
     @classmethod
     def validate_code(cls, v: str) -> str:
         clean = v.strip()
-        if not is_valid_8digit_code(clean):
-            raise ValueError("Invalid cashback code. Please enter exactly 8 digits.")
-        return clean
+        if not is_valid_scratch_code(clean):
+            raise ValueError("Invalid scratch code. Please enter exactly 8 alphanumeric characters.")
+        return clean.upper()
 
     @field_validator("phone_number")
     @classmethod
@@ -40,7 +40,7 @@ class RequestOTPResponse(BaseModel):
 
 
 class VerifyOTPInput(BaseModel):
-    code: str = Field(..., description="Unique 8-digit cashback code inside package")
+    code: str = Field(..., description="Unique alphanumeric scratch code inside package")
     phone_number: str = Field(..., description="Customer 10-digit mobile number")
     otp: str = Field(..., min_length=6, max_length=6, description="6-digit verification OTP")
 
@@ -48,9 +48,9 @@ class VerifyOTPInput(BaseModel):
     @classmethod
     def validate_code(cls, v: str) -> str:
         clean = v.strip()
-        if not is_valid_8digit_code(clean):
-            raise ValueError("Invalid cashback code. Please enter exactly 8 digits.")
-        return clean
+        if not is_valid_scratch_code(clean):
+            raise ValueError("Invalid scratch code. Please enter exactly 8 alphanumeric characters.")
+        return clean.upper()
 
     @field_validator("phone_number")
     @classmethod
@@ -77,7 +77,7 @@ class VerifyOTPResponse(BaseModel):
 
 
 class VerifyClaimInput(BaseModel):
-    code: str = Field(..., description="Unique 8-digit cashback code inside package")
+    code: str = Field(..., description="Unique alphanumeric scratch code inside package")
     phone_number: str = Field(..., description="Customer 10-digit mobile number")
     otp: Optional[str] = Field(None, min_length=6, max_length=6, description="6-digit verification OTP (optional if verification_token is provided)")
     verification_token: Optional[str] = Field(None, description="Signed server verification token from OTP step")
@@ -87,9 +87,9 @@ class VerifyClaimInput(BaseModel):
     @classmethod
     def validate_code(cls, v: str) -> str:
         clean = v.strip()
-        if not is_valid_8digit_code(clean):
-            raise ValueError("Invalid cashback code. Please enter exactly 8 digits.")
-        return clean
+        if not is_valid_scratch_code(clean):
+            raise ValueError("Invalid scratch code. Please enter exactly 8 alphanumeric characters.")
+        return clean.upper()
 
     @field_validator("phone_number")
     @classmethod

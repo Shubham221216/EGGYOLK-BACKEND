@@ -27,8 +27,8 @@ settings = get_settings()
 def request_otp(payload: RequestOTPInput, db: Session = Depends(get_db)):
     """
     Step 1 of Cashback Claim:
-    Validates the 8-digit code, enforces rate limits, generates a 6-digit OTP,
-    and returns response with DEMO OTP visible for testing.
+    Validates the scratch code, enforces rate limits, generates a 6-digit OTP,
+    and returns response.
     """
     # 1. Validate code state (exists, unused, not expired)
     code_record = CodeService.validate_code_for_otp(db, payload.code)
@@ -116,14 +116,14 @@ def claim_cashback(payload: VerifyClaimInput, db: Session = Depends(get_db)):
 
 @router.get("/status/{code}", response_model=CodeStatusResponse)
 def get_code_status(code: str, db: Session = Depends(get_db)):
-    """Check status of an 8-digit code without claiming."""
+    """Check status of a scratch code without claiming."""
     clean_code = code.strip()
     from app.models.cashback_code import CashbackCode
     code_record = db.query(CashbackCode).filter(CashbackCode.code == clean_code).first()
     if not code_record:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Invalid cashback code. Please check the 8-digit code inside your package."
+            detail="Invalid cashback code. Please check the scratch code inside your package."
         )
 
     return CodeStatusResponse(
